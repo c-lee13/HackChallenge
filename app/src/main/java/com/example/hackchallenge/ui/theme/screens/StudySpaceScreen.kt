@@ -1,6 +1,6 @@
 package com.example.hackchallenge.ui.theme.screens
 
-import androidx.compose.foundation.background
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -11,7 +11,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.Close
@@ -23,9 +22,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -115,61 +115,67 @@ public fun createScreenLayout() {
 private fun renderSpace(isOpen: Boolean, name: String, photo: Painter?) {
     Column(
         modifier = Modifier
-            .fillMaxWidth()
-            .height(250.dp) //fixed height
             .padding(15.dp)
-            .background(Color.Gray)
-            .clip(RoundedCornerShape(16.dp)), // Rounded corners
+            .clipToBounds(),
         horizontalAlignment = Alignment.Start,
         verticalArrangement = Arrangement.Bottom
     ) {
+        
+        IconButton(
+            onClick = {
 
-        //TODO image not being rounded & sized correctly
-        /*
-        if (photo != null) {
-            Image(
-                painter = photo,
-                contentDescription = "Study Space Image",
-                modifier = Modifier
-                    .fillMaxSize()
-                    .clip(RoundedCornerShape(16.dp)) // Ensure the image has rounded corners
-            )
-        }
-
-         */
-
-
-        Text(
-            text = name,
-            fontSize = 25.sp,
-            modifier = Modifier.padding(horizontal = 10.dp)
-        )
-
-        Row(
-            modifier = Modifier.padding(10.dp)
+            },
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(175.dp)
         ) {
-            if (isOpen) {
-                Icon(
-                    imageVector = Icons.Filled.CheckCircle,
-                    contentDescription = "Open",
-                    tint = Color.Green
-                )
-
-                Text(
-                    text = "Open Now",
-                    modifier = Modifier.padding(horizontal = 20.dp)
+            if (photo != null) {
+                Image(
+                    painter = photo,
+                    contentDescription = "Photo of study space",
+                    modifier = Modifier.fillMaxSize(),
+                    contentScale = ContentScale.FillBounds
                 )
             } else {
-                Icon(
-                    imageVector = Icons.Filled.Close,
-                    contentDescription = "Closed",
-                    tint = Color.Red
-                )
-
                 Text(
-                    text = "Closed",
-                    modifier = Modifier.padding(horizontal = 20.dp)
+                    text = "No Image Available"
                 )
+            }
+        }
+
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            Text(
+                text = name,
+                fontSize = 25.sp
+            )
+
+            Row() {
+                if (isOpen) {
+                    Icon(
+                        imageVector = Icons.Filled.CheckCircle,
+                        contentDescription = "Open",
+                        tint = Color.Green,
+                        modifier = Modifier.padding(horizontal = 10.dp)
+                    )
+
+                    Text(
+                        text = "Open Now"
+                    )
+                } else {
+                    Icon(
+                        imageVector = Icons.Filled.Close,
+                        contentDescription = "Closed",
+                        tint = Color.Red,
+                        modifier = Modifier.padding(horizontal = 10.dp)
+                    )
+
+                    Text(
+                        text = "Closed"
+                    )
+                }
             }
         }
 
