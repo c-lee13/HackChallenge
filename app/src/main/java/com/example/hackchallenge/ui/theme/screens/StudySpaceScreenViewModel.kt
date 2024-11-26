@@ -7,17 +7,17 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import javax.inject.Inject
 
-data class MainScreenViewState(
+data class StudySpaceScreenViewState(
     val studySpaces: List<String> = emptyList()
 )
 
 @HiltViewModel
-class MainScreenViewModel @Inject constructor(
+class StudySpaceScreenViewModel @Inject constructor(
     private val repository: StudySpaceRepository
 ) : ViewModel() {
 
-    val mainScreenViewState: StateFlow<MainScreenViewState> =
-        MutableStateFlow(MainScreenViewState())
+    val studySpaceScreenViewState: StateFlow<StudySpaceScreenViewState> =
+        MutableStateFlow(StudySpaceScreenViewState())
 
     /*
         init {

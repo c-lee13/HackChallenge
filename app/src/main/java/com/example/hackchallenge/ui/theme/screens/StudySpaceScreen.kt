@@ -35,8 +35,8 @@ import com.example.hackchallenge.data.StudySpace
 
 
 @Composable
-fun MainScreen(viewModel: MainScreenViewModel = hiltViewModel()) {
-    val viewState = viewModel.mainScreenViewState.collectAsState().value
+fun StudySpaceScreen(viewModel: StudySpaceScreenViewModel = hiltViewModel()) {
+    val viewState = viewModel.studySpaceScreenViewState.collectAsState().value
     createScreenLayout()
 
 }
