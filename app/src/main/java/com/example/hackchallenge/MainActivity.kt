@@ -1,7 +1,6 @@
 package com.example.hackchallenge
 
 import android.os.Bundle
-import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -27,6 +26,7 @@ import com.example.hackchallenge.ui.theme.screens.NavItem
 import com.example.hackchallenge.ui.theme.screens.Screen
 import com.example.hackchallenge.ui.theme.screens.Screen.ProfileScreen
 import com.example.hackchallenge.ui.theme.screens.Screen.StudySpaceScreen
+import com.example.hackchallenge.ui.theme.screens.createProfileLayout
 import com.example.hackchallenge.ui.theme.screens.createScreenLayout
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -67,16 +67,15 @@ class MainActivity : ComponentActivity() {
                     ) {
                         NavHost(
                             navController = navController,
-                            startDestination = Screen.StudySpaceScreen.route
+                            startDestination = Screen.ProfileScreen.route
                         ) {
 
                             composable(Screen.StudySpaceScreen.route) {
                                 //define content of screen
-                                Log.d("noigerg", "creating study screen")
                                 createScreenLayout()
                             }
                             composable(Screen.ProfileScreen.route) {
-
+                                createProfileLayout()
                             }
 
                         }
