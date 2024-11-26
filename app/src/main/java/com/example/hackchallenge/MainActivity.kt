@@ -1,6 +1,7 @@
 package com.example.hackchallenge
 
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -71,6 +72,7 @@ class MainActivity : ComponentActivity() {
 
                             composable(Screen.StudySpaceScreen.route) {
                                 //define content of screen
+                                Log.d("noigerg", "creating study screen")
                                 createScreenLayout()
                             }
                             composable(Screen.ProfileScreen.route) {

@@ -1,4 +1,4 @@
-package com.example.hackchallenge.ui.theme.di
+package com.example.hackchallenge.di
 
 import android.app.Application
 import dagger.hilt.android.HiltAndroidApp
