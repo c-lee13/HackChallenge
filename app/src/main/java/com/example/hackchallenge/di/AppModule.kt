@@ -26,7 +26,7 @@ object AppModule {
     @Singleton
     fun provideMyApi(moshi: Moshi): MyApi {
         return Retrofit.Builder()
-            .baseUrl("")
+            .baseUrl("https://dogapi.dog/api/v2/")
             .addConverterFactory(MoshiConverterFactory.create(moshi))
             .build()
             .create(MyApi::class.java)

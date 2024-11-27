@@ -26,8 +26,8 @@ import com.example.hackchallenge.ui.theme.screens.NavItem
 import com.example.hackchallenge.ui.theme.screens.Screen
 import com.example.hackchallenge.ui.theme.screens.Screen.ProfileScreen
 import com.example.hackchallenge.ui.theme.screens.Screen.StudySpaceScreen
+import com.example.hackchallenge.ui.theme.screens.StudySpaceScreen
 import com.example.hackchallenge.ui.theme.screens.createProfileLayout
-import com.example.hackchallenge.ui.theme.screens.createScreenLayout
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -72,7 +72,7 @@ class MainActivity : ComponentActivity() {
 
                             composable(Screen.StudySpaceScreen.route) {
                                 //define content of screen
-                                createScreenLayout()
+                                StudySpaceScreen()
                             }
                             composable(Screen.ProfileScreen.route) {
                                 createProfileLayout()
