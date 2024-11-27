@@ -1,6 +1,5 @@
 package com.example.hackchallenge.ui.theme.screens
 
-import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -15,6 +14,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.AddCircle
 import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Menu
@@ -30,7 +30,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
@@ -41,7 +40,10 @@ import com.example.hackchallenge.data.StudySpace
 
 
 @Composable
-fun StudySpaceScreen(viewModel: StudySpaceScreenViewModel = hiltViewModel()) {
+fun StudySpaceScreen(
+    viewModel: StudySpaceScreenViewModel = hiltViewModel(),
+    reservationViewModel: ReservationScreenViewModel = hiltViewModel()
+) {
     val viewState = viewModel.studySpaceScreenViewState.collectAsState().value
 
     val preferencesList = viewState.preferences
@@ -55,13 +57,19 @@ fun StudySpaceScreen(viewModel: StudySpaceScreenViewModel = hiltViewModel()) {
         StudySpace("Morrison Dining", "Noisy", painterResource(id = R.drawable.rpcc), null),
     ) //TODO switch to API of study spaces later
 
-    createScreenLayout(studySpaceList, preferencesList, allAttributesList, viewModel)
+    CreateScreenLayout(
+        studySpaceList,
+        preferencesList,
+        allAttributesList,
+        viewModel,
+        reservationViewModel
+    )
 
 
 }
 
 @Composable
-private fun createLazyRow(
+private fun CreateLazyRow(
     preferencesList: List<String>,
     allAttributesList: List<String>,
     viewModel: StudySpaceScreenViewModel
@@ -69,13 +77,10 @@ private fun createLazyRow(
     val lazyListState = rememberLazyListState()
     val otherList = allAttributesList.filter { it !in preferencesList }.distinct()
 
-    Log.d("entering lazy rw", "weewfewf")
     LazyRow(
         state = lazyListState
     ) {
-        Log.d("reer", "freferfe")
         items(preferencesList) { item ->
-            Log.d("preferences list", "freferfe")
             Button(
                 onClick = { viewModel.removePreference(item) }, //remove from preferences
                 modifier = Modifier
@@ -104,11 +109,12 @@ private fun createLazyRow(
 }
 
 @Composable
-public fun createScreenLayout(
+fun CreateScreenLayout(
     studySpacesList: List<StudySpace>,
     preferencesList: List<String>,
     allAttributesList: List<String>,
-    viewModel: StudySpaceScreenViewModel
+    viewModel: StudySpaceScreenViewModel,
+    reservationScreenViewModel: ReservationScreenViewModel
 ) {
 
     Column(
@@ -155,10 +161,7 @@ public fun createScreenLayout(
             )
         }
 
-        Log.d("creating lazy row", "ergregerg")
-        createLazyRow(preferencesList, allAttributesList, viewModel)
-
-        //implement lazy row if have time
+        CreateLazyRow(preferencesList, allAttributesList, viewModel)
 
         val lazyListState = rememberLazyListState()
 
@@ -168,14 +171,18 @@ public fun createScreenLayout(
             modifier = Modifier.weight(2f)
         ) {
             items(studySpacesList) { space ->
-                renderSpace(true, space.name, space.photo)
+                RenderSpace(true, space, reservationScreenViewModel)
             }
         }
     }
 }
 
 @Composable
-private fun renderSpace(isOpen: Boolean, name: String, photo: Painter?) {
+private fun RenderSpace(
+    isOpen: Boolean,
+    space: StudySpace,
+    reservationViewModel: ReservationScreenViewModel
+) {
     Column(
         modifier = Modifier
             .padding(15.dp)
@@ -192,9 +199,9 @@ private fun renderSpace(isOpen: Boolean, name: String, photo: Painter?) {
                 .fillMaxWidth()
                 .height(175.dp)
         ) {
-            if (photo != null) {
+            if (space.photo != null) {
                 Image(
-                    painter = photo,
+                    painter = space.photo,
                     contentDescription = "Photo of study space",
                     modifier = Modifier.fillMaxSize(),
                     contentScale = ContentScale.FillBounds
@@ -211,7 +218,7 @@ private fun renderSpace(isOpen: Boolean, name: String, photo: Painter?) {
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
             Text(
-                text = name,
+                text = space.name,
                 fontSize = 25.sp
             )
 
@@ -239,6 +246,16 @@ private fun renderSpace(isOpen: Boolean, name: String, photo: Painter?) {
                         text = "Closed"
                     )
                 }
+            }
+
+            //TODO reservations not updating when we go to reservation screen, seems like using different view model objects
+            IconButton(
+                onClick = { reservationViewModel.addReservation(space) }
+            ) {
+                Icon(
+                    imageVector = Icons.Filled.AddCircle,
+                    contentDescription = "Add to Reservations"
+                )
             }
         }
 

@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.Icon
@@ -23,11 +24,10 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.example.hackchallenge.ui.theme.HackChallengeTheme
 import com.example.hackchallenge.ui.theme.screens.NavItem
+import com.example.hackchallenge.ui.theme.screens.ProfileScreen
+import com.example.hackchallenge.ui.theme.screens.ReservationScreen
 import com.example.hackchallenge.ui.theme.screens.Screen
-import com.example.hackchallenge.ui.theme.screens.Screen.ProfileScreen
-import com.example.hackchallenge.ui.theme.screens.Screen.StudySpaceScreen
 import com.example.hackchallenge.ui.theme.screens.StudySpaceScreen
-import com.example.hackchallenge.ui.theme.screens.createProfileLayout
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -40,8 +40,9 @@ class MainActivity : ComponentActivity() {
             //navigation setup
             val navController = rememberNavController()
             val tabs = listOf(
-                NavItem(StudySpaceScreen, "Study Spaces", Icons.Filled.Home),
-                NavItem(ProfileScreen, "Profile", Icons.Filled.Person)
+                NavItem(Screen.ReservationScreen, "Reservations", Icons.Filled.DateRange),
+                NavItem(Screen.StudySpaceScreen, "Study Spaces", Icons.Filled.Home),
+                NavItem(Screen.ProfileScreen, "Profile", Icons.Filled.Person)
             )
             val navBackStackEntry = navController.currentBackStackEntryAsState().value
 
@@ -70,14 +71,18 @@ class MainActivity : ComponentActivity() {
                             startDestination = Screen.StudySpaceScreen.route
                         ) {
 
+                            composable(Screen.ReservationScreen.route) {
+                                ReservationScreen()
+                            }
+
                             composable(Screen.StudySpaceScreen.route) {
                                 //define content of screen
                                 StudySpaceScreen()
                             }
-                            composable(Screen.ProfileScreen.route) {
-                                createProfileLayout()
-                            }
 
+                            composable(Screen.ProfileScreen.route) {
+                                ProfileScreen()
+                            }
                         }
                     }
                 }
@@ -89,6 +94,7 @@ class MainActivity : ComponentActivity() {
         when (destination.route?.substringAfterLast(".")?.substringBefore("/")) {
             "StudySpaceScreen" -> Screen.StudySpaceScreen
             "ProfileScreen" -> Screen.ProfileScreen
+            "ReservationScreen" -> Screen.ReservationScreen
             else -> null
         }
 }

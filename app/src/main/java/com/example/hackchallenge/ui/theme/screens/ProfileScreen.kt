@@ -21,11 +21,11 @@ import androidx.compose.ui.unit.dp
 
 @Composable
 fun ProfileScreen() {
-
+    CreateProfileLayout()
 }
 
 @Composable
-public fun createProfileLayout() {
+fun CreateProfileLayout() {
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -43,7 +43,7 @@ public fun createProfileLayout() {
                 .align(Alignment.CenterHorizontally)
         )
 
-        
+
         Text(
             text = "Name: USER_NAME" //TODO allow user to select own username
         )

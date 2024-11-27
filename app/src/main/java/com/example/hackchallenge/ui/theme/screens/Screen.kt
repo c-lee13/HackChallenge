@@ -10,6 +10,9 @@ sealed class Screen(val route: String) {
 
     @Serializable
     data object ProfileScreen : Screen("ProfileScreen")
+
+    @Serializable
+    data object ReservationScreen : Screen("ReservationScreen")
 }
 
 //defining bottom tab
