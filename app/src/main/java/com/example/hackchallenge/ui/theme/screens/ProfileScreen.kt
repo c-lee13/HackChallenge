@@ -1,69 +1,113 @@
 package com.example.hackchallenge.ui.theme.screens
 
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Person
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
+
 
 @Composable
-fun ProfileScreen() {
-    CreateProfileLayout()
-}
-
-@Composable
-fun CreateProfileLayout() {
+fun ProfileScreen(viewModel: ProfileViewModel = viewModel()) {
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(10.dp),
-        horizontalAlignment = Alignment.Start
+            .padding(16.dp),
+        horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        //TODO ensure that user first creates account (but idk how to do password)
-        //TODO allow user to select own profile image
+        // Profile Picture Placeholder TODO profile pictures selection OR upload
         Icon(
             imageVector = Icons.Filled.Person,
             contentDescription = "Profile Picture",
             modifier = Modifier
-                .fillMaxWidth()
-                .size(75.dp)
-                .align(Alignment.CenterHorizontally)
+                .size(100.dp)
+                .padding(16.dp)
         )
 
+        // Editable Fields
+        ProfileField("Name", viewModel.userName.value, viewModel.isEditing.value) { viewModel.userName.value = it }
+        ProfileField("Net ID", viewModel.netId.value, viewModel.isEditing.value) { viewModel.netId.value = it }
+        ProfileField("Phone Number", viewModel.tempPhoneNumber.value, viewModel.isEditing.value) { viewModel.tempPhoneNumber.value = it }
+        ProfileField("Email", viewModel.tempEmail.value, viewModel.isEditing.value) { viewModel.tempEmail.value = it }
+        ProfileField("Country", viewModel.country.value, viewModel.isEditing.value) { viewModel.country.value = it }
 
-        Text(
-            text = "Name: USER_NAME" //TODO allow user to select own username
-        )
+        Spacer(modifier = Modifier.height(20.dp))
 
-        Text(
-            text = "Year: YEAR"
-        )
-
-        Text(
-            text = "Preferences:"
-        )
-
+        // Edit Profile Button
         Button(
-            onClick = {},
+            onClick = {
+                if (viewModel.isEditing.value) {
+                    viewModel.commitChanges()
+                } else {
+                    viewModel.startEditing()
+                }
+                viewModel.isEditing.value = !viewModel.isEditing.value
+            },
             modifier = Modifier.clip(RoundedCornerShape(10.dp)),
-            colors = ButtonDefaults.buttonColors(Color.LightGray)
+            colors = ButtonDefaults.buttonColors(
+                containerColor = if (viewModel.isEditing.value) Color.Green else Color.Blue
+            )
         ) {
             Text(
-                text = "Edit Profile",
-                color = Color.Black
+                text = if (viewModel.isEditing.value) "Finish Editing" else "Edit Profile",
+                color = Color.White
+            )
+        }
+    }
+
+    // Error Dialog for invalid input
+    if (viewModel.showErrorDialog.value) {
+        AlertDialog(
+            onDismissRequest = { viewModel.showErrorDialog.value = false },
+            title = { Text("Error") },
+            text = { Text(viewModel.errorMessage.value) },
+            confirmButton = {
+                Button(onClick = { viewModel.showErrorDialog.value = false }) {
+                    Text("OK")
+                }
+            }
+        )
+    }
+}
+
+@Composable
+fun ProfileField(label: String, value: String, isEditing: Boolean, onValueChange: (String) -> Unit) {
+    Column(modifier = Modifier.fillMaxWidth().padding(8.dp)) {
+        Text(text = "$label:", style = TextStyle(fontSize = 18.sp, color = Color.Gray))
+        if (isEditing) {
+            TextField(
+                value = value,
+                onValueChange = onValueChange,
+                textStyle = TextStyle(fontSize = 16.sp, color = Color.Black),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(4.dp)
+            )
+        } else {
+            Text(
+                text = value,
+                style = TextStyle(fontSize = 16.sp, color = Color.Black),
+                modifier = Modifier.padding(4.dp)
             )
         }
     }
