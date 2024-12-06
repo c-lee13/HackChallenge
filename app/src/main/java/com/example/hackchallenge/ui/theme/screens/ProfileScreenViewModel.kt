@@ -35,8 +35,8 @@ class ProfileViewModel : ViewModel() {
     }
 
     fun startEditing() {
-        tempPhoneNumber.value = phoneNumber.value
-        tempEmail.value = email.value
+        phoneNumber.value = tempPhoneNumber.value
+        email.value = tempEmail.value
     }
 
 
