@@ -25,17 +25,21 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.hilt.navigation.compose.hiltViewModel
+import kotlinx.coroutines.flow.StateFlow
+import androidx.compose.runtime.collectAsState
 
 
 @Composable
-fun ProfileScreen(viewModel: ProfileViewModel = viewModel()) {
+fun ProfileScreen(viewModel: ProfileViewModel = hiltViewModel()) {
+    val userName = viewModel.userName.collectAsState().value
+
     Column(
         modifier = Modifier
             .fillMaxSize()
             .padding(16.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        // Profile Picture Placeholder TODO profile pictures selection OR upload
         Icon(
             imageVector = Icons.Filled.Person,
             contentDescription = "Profile Picture",
@@ -45,22 +49,21 @@ fun ProfileScreen(viewModel: ProfileViewModel = viewModel()) {
         )
 
         // Editable Fields
-        ProfileField("Name", viewModel.userName.value, viewModel.isEditing.value) { viewModel.userName.value = it }
-        ProfileField("Net ID", viewModel.netId.value, viewModel.isEditing.value) { viewModel.netId.value = it }
+
+        ProfileField("User Name", userName, viewModel.isEditing.value) { newName ->
+            viewModel.updateUserName(newName)
+        }
+        ProfileField("Net ID", viewModel.netId.value, viewModel.isEditing.value) { newNetId ->
+            viewModel.updateNetId(newNetId)
+        }
         ProfileField("Phone Number", viewModel.tempPhoneNumber.value, viewModel.isEditing.value) { viewModel.tempPhoneNumber.value = it }
         ProfileField("Email", viewModel.tempEmail.value, viewModel.isEditing.value) { viewModel.tempEmail.value = it }
         ProfileField("Country", viewModel.country.value, viewModel.isEditing.value) { viewModel.country.value = it }
 
         Spacer(modifier = Modifier.height(20.dp))
 
-        // Edit Profile Button
         Button(
             onClick = {
-                if (viewModel.isEditing.value) {
-                    viewModel.commitChanges()
-                } else {
-                    viewModel.startEditing()
-                }
                 viewModel.isEditing.value = !viewModel.isEditing.value
             },
             modifier = Modifier.clip(RoundedCornerShape(10.dp)),
@@ -75,7 +78,6 @@ fun ProfileScreen(viewModel: ProfileViewModel = viewModel()) {
         }
     }
 
-    // Error Dialog for invalid input
     if (viewModel.showErrorDialog.value) {
         AlertDialog(
             onDismissRequest = { viewModel.showErrorDialog.value = false },
@@ -90,10 +92,18 @@ fun ProfileScreen(viewModel: ProfileViewModel = viewModel()) {
     }
 }
 
+
 @Composable
 fun ProfileField(label: String, value: String, isEditing: Boolean, onValueChange: (String) -> Unit) {
-    Column(modifier = Modifier.fillMaxWidth().padding(8.dp)) {
-        Text(text = "$label:", style = TextStyle(fontSize = 18.sp, color = Color.Gray))
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(8.dp)
+    ) {
+        Text(
+            text = "$label:",
+            style = TextStyle(fontSize = 18.sp, color = Color.Gray)
+        )
         if (isEditing) {
             TextField(
                 value = value,

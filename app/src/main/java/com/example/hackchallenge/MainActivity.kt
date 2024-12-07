@@ -17,6 +17,7 @@ import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.ui.Modifier
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavBackStackEntry
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -25,6 +26,7 @@ import androidx.navigation.compose.rememberNavController
 import com.example.hackchallenge.ui.theme.HackChallengeTheme
 import com.example.hackchallenge.ui.theme.screens.NavItem
 import com.example.hackchallenge.ui.theme.screens.ProfileScreen
+import com.example.hackchallenge.ui.theme.screens.ProfileViewModel
 import com.example.hackchallenge.ui.theme.screens.ReservationScreen
 import com.example.hackchallenge.ui.theme.screens.Screen
 import com.example.hackchallenge.ui.theme.screens.StudySpaceScreen
@@ -36,8 +38,8 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
+            val profileViewModel: ProfileViewModel = hiltViewModel() // Shared ViewModel
 
-            //navigation setup
             val navController = rememberNavController()
             val tabs = listOf(
                 NavItem(Screen.ReservationScreen, "Reservations", Icons.Filled.DateRange),
@@ -47,7 +49,6 @@ class MainActivity : ComponentActivity() {
             val navBackStackEntry = navController.currentBackStackEntryAsState().value
 
             HackChallengeTheme {
-
                 Scaffold(
                     modifier = Modifier.fillMaxSize(),
                     bottomBar = {
@@ -62,26 +63,20 @@ class MainActivity : ComponentActivity() {
                             }
                         }
                     }
-                ) { innerPadding -> //ensure box doesnt overlap with bottom bar
-                    Box(
-                        modifier = Modifier.padding(innerPadding)
-                    ) {
+                ) { innerPadding ->
+                    Box(modifier = Modifier.padding(innerPadding)) {
                         NavHost(
                             navController = navController,
                             startDestination = Screen.StudySpaceScreen.route
                         ) {
-
                             composable(Screen.ReservationScreen.route) {
                                 ReservationScreen()
                             }
-
                             composable(Screen.StudySpaceScreen.route) {
-                                //define content of screen
-                                StudySpaceScreen()
+                                StudySpaceScreen(profileViewModel = profileViewModel) // Pass shared ViewModel
                             }
-
                             composable(Screen.ProfileScreen.route) {
-                                ProfileScreen()
+                                ProfileScreen(viewModel = profileViewModel) // Pass shared ViewModel
                             }
                         }
                     }
@@ -91,10 +86,10 @@ class MainActivity : ComponentActivity() {
     }
 
     fun NavBackStackEntry.toScreen(): Screen? =
-        when (destination.route?.substringAfterLast(".")?.substringBefore("/")) {
-            "StudySpaceScreen" -> Screen.StudySpaceScreen
-            "ProfileScreen" -> Screen.ProfileScreen
-            "ReservationScreen" -> Screen.ReservationScreen
+        when (destination.route) {
+            Screen.StudySpaceScreen.route -> Screen.StudySpaceScreen
+            Screen.ProfileScreen.route -> Screen.ProfileScreen
+            Screen.ReservationScreen.route -> Screen.ReservationScreen
             else -> null
         }
 }

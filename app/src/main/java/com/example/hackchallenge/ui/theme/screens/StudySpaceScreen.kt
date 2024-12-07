@@ -37,13 +37,15 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.hackchallenge.R
 import com.example.hackchallenge.data.StudySpace
-
+import androidx.compose.runtime.collectAsState
 
 @Composable
 fun StudySpaceScreen(
+    profileViewModel: ProfileViewModel = hiltViewModel(),
     viewModel: StudySpaceScreenViewModel = hiltViewModel(),
     reservationViewModel: ReservationScreenViewModel = hiltViewModel()
 ) {
+    val userName = profileViewModel.userName.collectAsState().value
     val viewState = viewModel.studySpaceScreenViewState.collectAsState().value
 
     val preferencesList = viewState.preferences
@@ -58,14 +60,13 @@ fun StudySpaceScreen(
     ) //TODO switch to API of study spaces later
 
     CreateScreenLayout(
-        studySpaceList,
-        preferencesList,
-        allAttributesList,
-        viewModel,
-        reservationViewModel
+        studySpacesList = studySpaceList,
+        preferencesList = preferencesList,
+        allAttributesList = allAttributesList,
+        viewModel = viewModel,
+        reservationScreenViewModel = reservationViewModel,
+        userName = userName // 传递 userName
     )
-
-
 }
 
 @Composable
@@ -114,9 +115,9 @@ fun CreateScreenLayout(
     preferencesList: List<String>,
     allAttributesList: List<String>,
     viewModel: StudySpaceScreenViewModel,
-    reservationScreenViewModel: ReservationScreenViewModel
+    reservationScreenViewModel: ReservationScreenViewModel,
+    userName: String
 ) {
-
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -142,7 +143,7 @@ fun CreateScreenLayout(
             horizontalAlignment = Alignment.Start
         ) {
             Text(
-                text = "Hey, INSERT_NAME!",
+                text = "Hey, $userName!",
                 fontSize = 30.sp,
                 modifier = Modifier.padding(vertical = 10.dp)
             )
@@ -258,7 +259,6 @@ private fun RenderSpace(
                 )
             }
         }
-
 
     }
 }
